@@ -1,0 +1,24 @@
+name: moneytracker
+description: "A new Flutter project."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  cupertino_icons: ^1.0.8
+  currency_text_input_formatter: ^2.2.9
+  flutter:
+    sdk: flutter
+  provider: ^6.1.5+1
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
