@@ -30,7 +30,7 @@ class TransactionsList extends StatelessWidget {
                 : Colors.teal;
             return ListTile(
               title: Text(transaction.description),
-              subtitle: Text(type),
+              subtitle: Text('$type • ${_formatDate(transaction.dateTime)}'),
               trailing: Text(
                 value,
                 style: TextStyle(fontSize: 14, color: color),
@@ -40,5 +40,9 @@ class TransactionsList extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}-${date.month}-${date.year}';
   }
 }

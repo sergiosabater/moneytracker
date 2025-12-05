@@ -131,7 +131,10 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                 final transaction = Transaction(
                   type: type,
                   amount: type == TransactionType.expense ? -amount : amount,
-                  description: description,
+                  description: description.isEmpty
+                      ? 'No description'
+                      : description,
+                  dateTime: DateTime.now(),
                 );
                 // Add transaction
                 Provider.of<TransactionsProvider>(
