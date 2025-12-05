@@ -38,13 +38,25 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
           ),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: const Text(
-              'New Transaction',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.teal,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.grey),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                const Text(
+                  'New Transaction',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 40),
+              ],
             ),
           ),
           CupertinoSlidingSegmentedControl(
