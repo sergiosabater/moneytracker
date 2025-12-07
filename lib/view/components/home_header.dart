@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moneytracker/controller/transactions_provider.dart';
+import 'package:moneytracker/l10n/app_localizations.dart';
 import 'package:moneytracker/view/widgets/header_card.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,7 @@ class HomeHeader extends StatelessWidget {
         children: [
           const SizedBox(height: 12),
           Text(
-            'MONEY TRACKER',
+            AppLocalizations.of(context)!.appTitle,
             style: textTheme.titleSmall!.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.teal.shade900,
@@ -28,7 +29,7 @@ class HomeHeader extends StatelessWidget {
           ),
           SizedBox(height: 12),
           Text(
-            'Balance: ',
+            AppLocalizations.of(context)!.balance,
             style: textTheme.bodySmall!.copyWith(
               fontWeight: FontWeight.bold,
               color: Colors.white.withOpacity(0.5),
@@ -46,13 +47,13 @@ class HomeHeader extends StatelessWidget {
             child: Row(
               children: [
                 HeaderCard(
-                  title: 'Incomes',
+                  title: AppLocalizations.of(context)!.incomes,
                   amount: incomes,
                   icon: Icon(Icons.attach_money, color: Colors.teal),
                 ),
                 SizedBox(width: 12),
                 HeaderCard(
-                  title: 'Expenses',
+                  title: AppLocalizations.of(context)!.expenses,
                   amount: expenses,
                   icon: Icon(Icons.money_off, color: Colors.red),
                 ),

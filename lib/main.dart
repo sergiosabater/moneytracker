@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:moneytracker/controller/transactions_provider.dart';
+import 'package:moneytracker/l10n/app_localizations.dart';
 import 'package:moneytracker/view/home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +17,13 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => TransactionsProvider(),
       child: MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('en'), Locale('es')],
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
