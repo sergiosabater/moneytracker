@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moneytracker/controller/transactions_provider.dart';
+import 'package:moneytracker/l10n/app_localizations.dart';
 import 'package:moneytracker/model/transaction.dart';
 import 'package:provider/provider.dart';
 
@@ -20,8 +21,8 @@ class TransactionsList extends StatelessWidget {
           itemBuilder: (context, index) {
             final transaction = transactions[index];
             final type = transaction.type == TransactionType.income
-                ? 'Income'
-                : 'Expense';
+                ? AppLocalizations.of(context)!.income
+                : AppLocalizations.of(context)!.expense;
             final value = transaction.type == TransactionType.expense
                 ? '-\$ ${transaction.amount.abs().toStringAsFixed(2)}'
                 : '\$ ${transaction.amount.toStringAsFixed(2)}';
