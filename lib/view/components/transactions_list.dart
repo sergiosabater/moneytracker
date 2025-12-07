@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moneytracker/controller/transactions_provider.dart';
+import 'package:moneytracker/l10n/app_localizations.dart';
 import 'package:moneytracker/model/transaction.dart';
 import 'package:provider/provider.dart';
 
@@ -20,8 +21,8 @@ class TransactionsList extends StatelessWidget {
           itemBuilder: (context, index) {
             final transaction = transactions[index];
             final type = transaction.type == TransactionType.income
-                ? 'Income'
-                : 'Expense';
+                ? AppLocalizations.of(context)!.income
+                : AppLocalizations.of(context)!.expense;
             final value = transaction.type == TransactionType.expense
                 ? '-\$ ${transaction.amount.abs().toStringAsFixed(2)}'
                 : '\$ ${transaction.amount.toStringAsFixed(2)}';
@@ -30,7 +31,7 @@ class TransactionsList extends StatelessWidget {
                 : Colors.teal;
             return ListTile(
               title: Text(transaction.description),
-              subtitle: Text(type),
+              subtitle: Text('$type • ${_formatDate(transaction.dateTime)}'),
               trailing: Text(
                 value,
                 style: TextStyle(fontSize: 14, color: color),
@@ -40,5 +41,9 @@ class TransactionsList extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}-${date.month}-${date.year}';
   }
 }

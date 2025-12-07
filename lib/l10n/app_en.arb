@@ -1,0 +1,14 @@
+{
+  "appTitle": "MONEY TRACKER",
+  "balance": "Balance: ",
+  "incomes": "Incomes",
+  "expenses": "Expenses",
+  "newTransaction": "New Transaction",
+  "income": "Income",
+  "expense": "Expense",
+  "amount": "AMOUNT",
+  "description": "DESCRIPTION",
+  "enterDescription": "Enter description",
+  "noDescription": "No description",
+  "add": "Add"
+}

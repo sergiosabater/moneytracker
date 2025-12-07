@@ -2,6 +2,7 @@ import 'package:currency_text_input_formatter/currency_text_input_formatter.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moneytracker/controller/transactions_provider.dart';
+import 'package:moneytracker/l10n/app_localizations.dart';
 import 'package:moneytracker/model/transaction.dart';
 import 'package:provider/provider.dart';
 
@@ -38,27 +39,29 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
           ),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: const Text(
-              'New Transaction',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.teal,
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.grey),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Text(
+                  AppLocalizations.of(context)!.newTransaction,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 40),
+              ],
             ),
           ),
-          CupertinoSlidingSegmentedControl(
+          CupertinoSlidingSegmentedControl<int>(
             groupValue: typeIndex,
-            children: const {
-              0: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Text('Income'),
-              ),
-              1: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Text('Expense'),
-              ),
-            },
             onValueChanged: (value) {
               setState(() {
                 typeIndex = value!;
@@ -67,10 +70,26 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                     : TransactionType.expense;
               });
             },
+            children: {
+              0: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Text(AppLocalizations.of(context)!.income),
+              ),
+              1: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Text(AppLocalizations.of(context)!.expense),
+              ),
+            },
           ),
           const SizedBox(height: 20),
           Text(
-            'AMOUNT',
+            AppLocalizations.of(context)!.amount,
             style: textTheme.bodySmall!.copyWith(color: Colors.teal),
           ),
           TextField(
@@ -78,7 +97,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
               CurrencyTextInputFormatter.currency(symbol: '\$'),
             ],
             textAlign: TextAlign.center,
-            decoration: InputDecoration.collapsed(
+            decoration: const InputDecoration.collapsed(
               hintText: '\$0.00',
               hintStyle: TextStyle(color: Colors.grey),
             ),
@@ -97,14 +116,14 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
           ),
           const SizedBox(height: 20),
           Text(
-            'DESCRIPTION',
+            AppLocalizations.of(context)!.description,
             style: textTheme.bodySmall!.copyWith(color: Colors.teal),
           ),
           TextField(
             textAlign: TextAlign.center,
             decoration: InputDecoration.collapsed(
-              hintText: 'Enter description',
-              hintStyle: TextStyle(color: Colors.grey),
+              hintText: AppLocalizations.of(context)!.enterDescription,
+              hintStyle: const TextStyle(color: Colors.grey),
             ),
             keyboardType: TextInputType.text,
             onChanged: (value) {
@@ -119,7 +138,10 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                 final transaction = Transaction(
                   type: type,
                   amount: type == TransactionType.expense ? -amount : amount,
-                  description: description,
+                  description: description.isEmpty
+                      ? AppLocalizations.of(context)!.noDescription
+                      : description,
+                  dateTime: DateTime.now(),
                 );
                 // Add transaction
                 Provider.of<TransactionsProvider>(
@@ -129,7 +151,10 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-              child: Text('Add', style: TextStyle(color: Colors.white)),
+              child: Text(
+                AppLocalizations.of(context)!.add,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],

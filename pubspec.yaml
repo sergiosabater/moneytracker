@@ -13,6 +13,9 @@ dependencies:
   currency_text_input_formatter: ^2.2.9
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   provider: ^6.1.5+1
 
 dev_dependencies:
@@ -22,3 +25,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
