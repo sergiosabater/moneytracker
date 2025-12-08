@@ -1,5 +1,6 @@
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' hide Transaction;
 import 'package:path/path.dart';
+import 'package:moneytracker/model/transaction.dart';
 
 class DatabaseHelper {
   // Singleton pattern
@@ -34,6 +35,41 @@ class DatabaseHelper {
         dateTime TEXT NOT NULL
       )
     ''');
+  }
+
+  // Insert a new transaction
+  Future<int> insertTransaction(Transaction transaction) async {
+    final db = await instance.database;
+
+    return await db.insert('transactions', {
+      'type': transaction.type.toString(),
+      'amount': transaction.amount,
+      'description': transaction.description,
+      'dateTime': transaction.dateTime.toIso8601String(),
+    });
+  }
+
+  // Get all transactions
+  Future<List<Transaction>> getAllTransactions() async {
+    final db = await instance.database;
+
+    final result = await db.query(
+      'transactions',
+      orderBy: 'dateTime DESC', // Order by most recent first
+    );
+
+    return result
+        .map(
+          (json) => Transaction(
+            type: json['type'] == 'TransactionType.income'
+                ? TransactionType.income
+                : TransactionType.expense,
+            amount: json['amount'] as double,
+            description: json['description'] as String,
+            dateTime: DateTime.parse(json['dateTime'] as String),
+          ),
+        )
+        .toList();
   }
 
   // Close the database

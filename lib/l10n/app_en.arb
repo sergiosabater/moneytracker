@@ -10,5 +10,6 @@
   "description": "DESCRIPTION",
   "enterDescription": "Enter description",
   "noDescription": "No description",
-  "add": "Add"
+  "add": "Add",
+  "noTransactionsYet": "No transactions yet"
 }

@@ -10,5 +10,6 @@
   "description": "DESCRIPCIÓN",
   "enterDescription": "Ingrese descripción",
   "noDescription": "Sin descripción",
-  "add": "Agregar"
+  "add": "Agregar",
+  "noTransactionsYet": "Aún no hay transacciones"
 }

@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:moneytracker/database/database_helper.dart';
 import 'package:moneytracker/model/transaction.dart';
 
 class TransactionsProvider extends ChangeNotifier {
-  final List<Transaction> _transactions = [];
+  List<Transaction> _transactions = [];
+  bool _isLoading = true;
 
   List<Transaction> get transactions => _transactions;
+  bool get isLoading => _isLoading;
+
+  TransactionsProvider() {
+    _loadTransactions();
+  }
+
+  // Load transactions from the database
+  Future<void> _loadTransactions() async {
+    _isLoading = true;
+    notifyListeners();
+
+    _transactions = await DatabaseHelper.instance.getAllTransactions();
+
+    _isLoading = false;
+    notifyListeners();
+  }
 
   double getTotalIncomes() {
     return _transactions
@@ -24,12 +42,13 @@ class TransactionsProvider extends ChangeNotifier {
     return getTotalIncomes() + getTotalExpenses();
   }
 
-  void addTransaction(Transaction transaction) {
-    _transactions.add(transaction);
-    notifyListeners();
+  Future<void> addTransaction(Transaction transaction) async {
+    await DatabaseHelper.instance.insertTransaction(transaction);
+    await _loadTransactions(); // Reload from the DB
   }
 
-  void clearTransactions() {
+  Future<void> clearTransactions() async {
+    // This method will be implemented later in DatabaseHelper
     _transactions.clear();
     notifyListeners();
   }

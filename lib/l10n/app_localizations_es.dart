@@ -43,4 +43,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get add => 'Agregar';
+
+  @override
+  String get noTransactionsYet => 'Aún no hay transacciones';
 }
