@@ -10,5 +10,12 @@
   "description": "DESCRIPTION",
   "enterDescription": "Enter description",
   "noDescription": "No description",
-  "add": "Add"
+  "add": "Add",
+  "noTransactionsYet": "No transactions yet",
+  "transactionOptions": "Transaction Options",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirmDelete": "Delete Transaction",
+  "confirmDeleteMessage": "Are you sure you want to delete this transaction?",
+  "cancel": "Cancel"
 }

@@ -43,4 +43,26 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get add => 'Agregar';
+
+  @override
+  String get noTransactionsYet => 'Aún no hay transacciones';
+
+  @override
+  String get transactionOptions => 'Opciones de Transacción';
+
+  @override
+  String get edit => 'Editar';
+
+  @override
+  String get delete => 'Eliminar';
+
+  @override
+  String get confirmDelete => 'Eliminar Transacción';
+
+  @override
+  String get confirmDeleteMessage =>
+      '¿Estás seguro de que quieres eliminar esta transacción?';
+
+  @override
+  String get cancel => 'Cancelar';
 }
