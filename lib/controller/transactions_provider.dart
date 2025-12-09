@@ -47,9 +47,15 @@ class TransactionsProvider extends ChangeNotifier {
     await _loadTransactions(); // Reload from the DB
   }
 
+  // Delete a transaction by ID
+  Future<void> deleteTransaction(int id) async {
+    await DatabaseHelper.instance.deleteTransaction(id);
+    await _loadTransactions(); // Reload from the DB
+  }
+
+  // Delete all transactions
   Future<void> clearTransactions() async {
-    // This method will be implemented later in DatabaseHelper
-    _transactions.clear();
-    notifyListeners();
+    await DatabaseHelper.instance.deleteAllTransactions();
+    await _loadTransactions(); // Reload from the DB
   }
 }

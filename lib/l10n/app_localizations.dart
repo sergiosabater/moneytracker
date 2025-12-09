@@ -175,6 +175,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No transactions yet'**
   String get noTransactionsYet;
+
+  /// No description provided for @transactionOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Options'**
+  String get transactionOptions;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @confirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Transaction'**
+  String get confirmDelete;
+
+  /// No description provided for @confirmDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this transaction?'**
+  String get confirmDeleteMessage;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate

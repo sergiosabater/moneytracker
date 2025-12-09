@@ -61,6 +61,7 @@ class DatabaseHelper {
     return result
         .map(
           (json) => Transaction(
+            id: json['id'] as int,
             type: json['type'] == 'TransactionType.income'
                 ? TransactionType.income
                 : TransactionType.expense,
@@ -70,6 +71,20 @@ class DatabaseHelper {
           ),
         )
         .toList();
+  }
+
+  // Delete a transaction by id
+  Future<int> deleteTransaction(int id) async {
+    final db = await instance.database;
+
+    return await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Delete all transactions
+  Future<int> deleteAllTransactions() async {
+    final db = await instance.database;
+
+    return await db.delete('transactions');
   }
 
   // Close the database
