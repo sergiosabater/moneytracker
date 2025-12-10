@@ -1,6 +1,6 @@
 {
   "appTitle": "MONEY TRACKER",
-  "balance": "Balance: ",
+  "balance": "Balance:",
   "incomes": "Incomes",
   "expenses": "Expenses",
   "newTransaction": "New Transaction",
@@ -17,5 +17,9 @@
   "delete": "Delete",
   "confirmDelete": "Delete Transaction",
   "confirmDeleteMessage": "Are you sure you want to delete this transaction?",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "noDescriptionTitle": "No Description",
+  "noDescriptionMessage": "Are you sure you want to add a transaction without a description?",
+  "transactionDeleted": "Transaction deleted",
+  "transactionAdded": "Transaction added"
 }

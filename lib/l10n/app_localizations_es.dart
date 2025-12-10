@@ -12,7 +12,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'MONEY TRACKER';
 
   @override
-  String get balance => 'Saldo: ';
+  String get balance => 'Saldo:';
 
   @override
   String get incomes => 'Ingresos';
@@ -65,4 +65,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cancel => 'Cancelar';
+
+  @override
+  String get noDescriptionTitle => 'Sin Descripción';
+
+  @override
+  String get noDescriptionMessage =>
+      '¿Seguro que quiere agregar una transacción sin descripción?';
+
+  @override
+  String get transactionDeleted => 'Transacción eliminada';
+
+  @override
+  String get transactionAdded => 'Transacción agregada';
 }

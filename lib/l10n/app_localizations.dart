@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @balance.
   ///
   /// In en, this message translates to:
-  /// **'Balance: '**
+  /// **'Balance:'**
   String get balance;
 
   /// No description provided for @incomes.
@@ -211,6 +211,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @noDescriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Description'**
+  String get noDescriptionTitle;
+
+  /// No description provided for @noDescriptionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to add a transaction without a description?'**
+  String get noDescriptionMessage;
+
+  /// No description provided for @transactionDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction deleted'**
+  String get transactionDeleted;
+
+  /// No description provided for @transactionAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction added'**
+  String get transactionAdded;
 }
 
 class _AppLocalizationsDelegate
