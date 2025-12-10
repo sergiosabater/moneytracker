@@ -60,9 +60,9 @@ class TransactionsList extends StatelessWidget {
               listen: false,
             ).deleteTransaction(transaction.id!);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Transaction deleted'),
-                duration: Duration(seconds: 2),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.transactionDeleted),
+                duration: const Duration(seconds: 2),
                 backgroundColor: Colors.red,
               ),
             );
