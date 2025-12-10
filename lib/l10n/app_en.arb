@@ -1,4 +1,5 @@
 {
+  "@@locale": "en",
   "appTitle": "MONEY TRACKER",
   "balance": "Balance:",
   "incomes": "Incomes",
