@@ -83,7 +83,6 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
         return NoDescriptionDialog(
           onConfirm: () {
             _saveTransaction();
-            Navigator.pop(context); // Cerrar el diálogo de Nueva Transacción
           },
         );
       },
