@@ -6,8 +6,15 @@ import 'package:moneytracker/view/components/transaction_delete_dialog.dart';
 import 'package:moneytracker/view/components/transaction_options_dialog.dart';
 import 'package:provider/provider.dart';
 
-class TransactionsList extends StatelessWidget {
+class TransactionsList extends StatefulWidget {
   const TransactionsList({super.key});
+
+  @override
+  State<TransactionsList> createState() => _TransactionsListState();
+}
+
+class _TransactionsListState extends State<TransactionsList> {
+  bool _hasAnimatedInitially = false;
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
@@ -89,6 +96,17 @@ class TransactionsList extends StatelessWidget {
     final transactions = provider.transactions;
     final isLoading = provider.isLoading;
 
+    // Marcar como animado después de la primera carga
+    if (!isLoading && !_hasAnimatedInitially && transactions.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _hasAnimatedInitially = true;
+          });
+        }
+      });
+    }
+
     return Expanded(
       child: Container(
         decoration: const BoxDecoration(
@@ -104,6 +122,7 @@ class TransactionsList extends StatelessWidget {
                 formatDate: _formatDate,
                 formatTime: _formatTime,
                 onTransactionLongPress: _showTransactionOptions,
+                hasAnimatedInitially: _hasAnimatedInitially,
               ),
       ),
     );
@@ -147,12 +166,14 @@ class _TransactionsList extends StatelessWidget {
   final String Function(DateTime) formatDate;
   final String Function(DateTime) formatTime;
   final Function(BuildContext, Transaction) onTransactionLongPress;
+  final bool hasAnimatedInitially;
 
   const _TransactionsList({
     required this.transactions,
     required this.formatDate,
     required this.formatTime,
     required this.onTransactionLongPress,
+    required this.hasAnimatedInitially,
   });
 
   @override
@@ -161,6 +182,11 @@ class _TransactionsList extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemCount: transactions.length,
       itemBuilder: (context, index) {
+        // Animar en cascada solo la primera vez
+        final shouldAnimateCascade = !hasAnimatedInitially;
+        // Animar individualmente solo el primer item si ya se animó inicialmente
+        final shouldAnimateNew = hasAnimatedInitially && index == 0;
+
         return _TransactionCard(
           key: ValueKey(transactions[index].id),
           transaction: transactions[index],
@@ -168,7 +194,8 @@ class _TransactionsList extends StatelessWidget {
           formatTime: formatTime,
           onLongPress: () =>
               onTransactionLongPress(context, transactions[index]),
-          animateEntry: index == 0,
+          animateEntry: shouldAnimateCascade || shouldAnimateNew,
+          cascadeIndex: shouldAnimateCascade ? index : 0,
         );
       },
     );
@@ -181,6 +208,7 @@ class _TransactionCard extends StatefulWidget {
   final String Function(DateTime) formatTime;
   final VoidCallback onLongPress;
   final bool animateEntry;
+  final int cascadeIndex;
 
   const _TransactionCard({
     super.key,
@@ -189,6 +217,7 @@ class _TransactionCard extends StatefulWidget {
     required this.formatTime,
     required this.onLongPress,
     required this.animateEntry,
+    required this.cascadeIndex,
   });
 
   @override
@@ -204,8 +233,12 @@ class _TransactionCardState extends State<_TransactionCard>
   @override
   void initState() {
     super.initState();
+
+    // Delay en cascada solo para animación inicial
+    final delay = widget.cascadeIndex * 100;
+
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
@@ -215,11 +248,20 @@ class _TransactionCardState extends State<_TransactionCard>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _slideAnimation = Tween<Offset>(
-      begin: widget.animateEntry ? const Offset(0.3, 0) : Offset.zero,
+      begin: widget.animateEntry ? const Offset(0, 0.3) : Offset.zero,
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
-    _controller.forward();
+    // Aplicar delay solo si es animación en cascada
+    if (widget.animateEntry && widget.cascadeIndex > 0) {
+      Future.delayed(Duration(milliseconds: delay), () {
+        if (mounted) {
+          _controller.forward();
+        }
+      });
+    } else {
+      _controller.forward();
+    }
   }
 
   @override
