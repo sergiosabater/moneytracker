@@ -116,14 +116,14 @@ class _TransactionsListState extends State<TransactionsList> {
         child: isLoading
             ? const Center(child: CircularProgressIndicator(color: Colors.teal))
             : transactions.isEmpty
-                ? _EmptyState()
-                : _TransactionsList(
-                    transactions: transactions,
-                    formatDate: _formatDate,
-                    formatTime: _formatTime,
-                    onTransactionLongPress: _showTransactionOptions,
-                    hasAnimatedInitially: _hasAnimatedInitially,
-                  ),
+            ? _EmptyState()
+            : _TransactionsList(
+                transactions: transactions,
+                formatDate: _formatDate,
+                formatTime: _formatTime,
+                onTransactionLongPress: _showTransactionOptions,
+                hasAnimatedInitially: _hasAnimatedInitially,
+              ),
       ),
     );
   }
@@ -305,11 +305,11 @@ class _TransactionCardState extends State<_TransactionCard>
                 ],
                 border: Border.all(color: Colors.grey.shade100, width: 1),
               ),
+
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    // Icon container con animación sutil
                     Container(
                       width: 48,
                       height: 48,
@@ -328,121 +328,132 @@ class _TransactionCardState extends State<_TransactionCard>
                           width: 1.5,
                         ),
                       ),
-                      child: Center(
-                        child: Icon(icon, color: color, size: 24),
-                      ),
+                      child: Center(child: Icon(icon, color: color, size: 24)),
                     ),
                     const SizedBox(width: 16),
 
-                    // Transaction info
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Stack(
                         children: [
-                          Text(
-                            widget.transaction.description,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 6),
-                          
-                          // Tipo de transacción
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: color.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: color.withOpacity(0.2),
-                                width: 1,
-                              ),
-                            ),
-                            child: Text(
-                              typeLabel,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: color,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          
-                          // Fecha y hora - TEXTO MÁS GRANDE
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.calendar_month,
-                                size: 14,
-                                color: Colors.grey.shade600,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                widget.formatDate(widget.transaction.dateTime),
-                                style: TextStyle(
-                                  fontSize: 13, // Aumentado de 11 a 13
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey.shade700,
+                              Padding(
+                                padding: const EdgeInsets.only(right: 80),
+                                child: Text(
+                                  widget.transaction.description,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Icon(
-                                Icons.access_time,
-                                size: 14,
-                                color: Colors.grey.shade600,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                widget.formatTime(widget.transaction.dateTime),
-                                style: TextStyle(
-                                  fontSize: 13, // Aumentado de 11 a 13
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey.shade700,
+                              const SizedBox(height: 6),
+
+                              // Tipo de transacción
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
+                                decoration: BoxDecoration(
+                                  color: color.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: color.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  typeLabel,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: color,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.calendar_month,
+                                    size: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    widget.formatDate(
+                                      widget.transaction.dateTime,
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.access_time,
+                                    size: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    widget.formatTime(
+                                      widget.transaction.dateTime,
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
 
-                    // Amount con estilo mejorado
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            color.withOpacity(0.1),
-                            color.withOpacity(0.05),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: color.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                          letterSpacing: -0.5,
-                        ),
+                          // Monto posicionado en la parte superior derecha
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    color.withOpacity(0.1),
+                                    color.withOpacity(0.05),
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: color.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: color,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
