@@ -17,7 +17,7 @@ class _TransactionsListState extends State<TransactionsList> {
   bool _hasAnimatedInitially = false;
 
   String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 
   String _formatTime(DateTime date) {
@@ -116,14 +116,14 @@ class _TransactionsListState extends State<TransactionsList> {
         child: isLoading
             ? const Center(child: CircularProgressIndicator(color: Colors.teal))
             : transactions.isEmpty
-            ? _EmptyState()
-            : _TransactionsList(
-                transactions: transactions,
-                formatDate: _formatDate,
-                formatTime: _formatTime,
-                onTransactionLongPress: _showTransactionOptions,
-                hasAnimatedInitially: _hasAnimatedInitially,
-              ),
+                ? _EmptyState()
+                : _TransactionsList(
+                    transactions: transactions,
+                    formatDate: _formatDate,
+                    formatTime: _formatTime,
+                    onTransactionLongPress: _showTransactionOptions,
+                    hasAnimatedInitially: _hasAnimatedInitially,
+                  ),
       ),
     );
   }
@@ -274,7 +274,7 @@ class _TransactionCardState extends State<_TransactionCard>
   Widget build(BuildContext context) {
     final isIncome = widget.transaction.type == TransactionType.income;
     final color = isIncome ? Colors.teal : Colors.red;
-    final icon = isIncome ? Icons.arrow_downward : Icons.arrow_upward;
+    final icon = isIncome ? Icons.trending_up : Icons.trending_down;
     final typeLabel = isIncome
         ? AppLocalizations.of(context)!.income
         : AppLocalizations.of(context)!.expense;
@@ -309,15 +309,28 @@ class _TransactionCardState extends State<_TransactionCard>
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    // Icon container
+                    // Icon container con animación sutil
                     Container(
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
+                        gradient: LinearGradient(
+                          colors: [
+                            color.withOpacity(0.15),
+                            color.withOpacity(0.05),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: color.withOpacity(0.2),
+                          width: 1.5,
+                        ),
                       ),
-                      child: Icon(icon, color: color, size: 24),
+                      child: Center(
+                        child: Icon(icon, color: color, size: 24),
+                      ),
                     ),
                     const SizedBox(width: 16),
 
@@ -337,54 +350,62 @@ class _TransactionCardState extends State<_TransactionCard>
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 6),
-                          // Primera línea: tipo
+                          
+                          // Tipo de transacción
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: color.withValues(alpha: 0.1),
+                              color: color.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: color.withOpacity(0.2),
+                                width: 1,
+                              ),
                             ),
                             child: Text(
                               typeLabel,
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: color,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          // Segunda línea: fecha y hora
+                          const SizedBox(height: 8),
+                          
+                          // Fecha y hora - TEXTO MÁS GRANDE
                           Row(
                             children: [
                               Icon(
-                                Icons.calendar_today,
-                                size: 11,
-                                color: Colors.grey.shade500,
+                                Icons.calendar_month,
+                                size: 14,
+                                color: Colors.grey.shade600,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 6),
                               Text(
                                 widget.formatDate(widget.transaction.dateTime),
                                 style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey.shade600,
+                                  fontSize: 13, // Aumentado de 11 a 13
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey.shade700,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 12),
                               Icon(
                                 Icons.access_time,
-                                size: 11,
-                                color: Colors.grey.shade500,
+                                size: 14,
+                                color: Colors.grey.shade600,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 6),
                               Text(
                                 widget.formatTime(widget.transaction.dateTime),
                                 style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey.shade600,
+                                  fontSize: 13, // Aumentado de 11 a 13
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey.shade700,
                                 ),
                               ),
                             ],
@@ -393,13 +414,35 @@ class _TransactionCardState extends State<_TransactionCard>
                       ),
                     ),
 
-                    // Amount
-                    Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: color,
+                    // Amount con estilo mejorado
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            color.withOpacity(0.1),
+                            color.withOpacity(0.05),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: color.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                     ),
                   ],
