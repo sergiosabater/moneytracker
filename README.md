@@ -1,4 +1,4 @@
-# Money Tracker 🤑
+# Money Tracker
 
 **Money Tracker** is a Flutter application designed to help users manage their personal finances efficiently. Track your income and expenses, visualize your spending habits, and gain insights to make smarter financial decisions.
 
@@ -19,8 +19,32 @@
 
 ---
 
-## Screenshots
+## Usage
 
-*Add screenshots here to showcase your app UI*
+- Open the app and create your first transaction.
+- Categorize expenses and income for better tracking.
+- Access the **Analytics** tab to see charts and insights.
+- Set budgets in the **Budget** section to monitor spending.
 
 ---
+
+## Tech Stack
+
+- **Flutter** – Cross-platform UI framework.
+- **Dart** – Programming language.
+- **Provider / Riverpod** – State management.
+- **SQLite / Hive** – Local data storage.
+- **fl_chart** – Graph and chart visualization.
+
+---
+
+## Screenshots
+
+*I will add more screenshots later to showcase app UI*
+
+---
+
+## Contact
+
+For any questions or suggestions, you can reach me at:  
+**Email:** sergiosabater@gmail.com
