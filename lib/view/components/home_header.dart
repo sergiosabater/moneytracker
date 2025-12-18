@@ -1,4 +1,3 @@
-// home_header.dart - Versión mejorada con animaciones y diseño moderno
 import 'package:flutter/material.dart';
 import 'package:moneytracker/controller/transactions_provider.dart';
 import 'package:moneytracker/l10n/app_localizations.dart';
@@ -33,15 +32,13 @@ class _HomeHeaderState extends State<HomeHeader>
       ),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1.0),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -1.0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(
@@ -113,11 +110,7 @@ class _HomeHeaderState extends State<HomeHeader>
                   ShaderMask(
                     shaderCallback: (bounds) {
                       return const LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white70,
-                          Colors.white,
-                        ],
+                        colors: [Colors.white, Colors.white70, Colors.white],
                         stops: [0.0, 0.5, 1.0],
                       ).createShader(bounds);
                     },
@@ -132,7 +125,7 @@ class _HomeHeaderState extends State<HomeHeader>
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Balance
                   Text(
                     AppLocalizations.of(context)!.balance.toUpperCase(),
@@ -145,7 +138,7 @@ class _HomeHeaderState extends State<HomeHeader>
                   const SizedBox(height: 8),
                   AnimatedBalanceText(balance: balance),
                   const SizedBox(height: 30),
-                  
+
                   // Cards de ingresos y gastos
                   Row(
                     children: [
@@ -208,9 +201,7 @@ class _AnimatedBalanceTextState extends State<AnimatedBalanceText>
     _scaleAnim = TweenSequence<double>([
       TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.1), weight: 1),
       TweenSequenceItem(tween: Tween<double>(begin: 1.1, end: 1.0), weight: 1),
-    ]).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _colorAnim = ColorTween(
       begin: Colors.white,
@@ -245,18 +236,18 @@ class _AnimatedBalanceTextState extends State<AnimatedBalanceText>
           child: Text(
             '\$ ${widget.balance.toStringAsFixed(2)}',
             style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 42,
-                  color: _colorAnim.value,
-                  letterSpacing: 1.2,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+              fontWeight: FontWeight.w900,
+              fontSize: 42,
+              color: _colorAnim.value,
+              letterSpacing: 1.2,
+              shadows: [
+                Shadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
+              ],
+            ),
           ),
         );
       },
@@ -382,14 +373,10 @@ class __ModernStatsCardState extends State<_ModernStatsCard> {
                             ),
                           ],
                         ),
-                        child: Icon(
-                          widget.icon,
-                          color: widget.color,
-                          size: 24,
-                        ),
+                        child: Icon(widget.icon, color: widget.color, size: 24),
                       ),
                       const SizedBox(height: 12),
-                      
+
                       // Título
                       Text(
                         widget.title.toUpperCase(),
@@ -400,21 +387,35 @@ class __ModernStatsCardState extends State<_ModernStatsCard> {
                           letterSpacing: 1.5,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      
-                      // Monto
-                      Text(
-                        formattedAmount,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: widget.color,
-                              fontSize: 20,
-                              letterSpacing: -0.5,
-                            ),
+                      const SizedBox(height: 0),
+
+                      // Monto - ALINEADO A LA DERECHA con tamaño mayor y desplazado hacia abajo
+                      Transform.translate(
+                        offset: const Offset(
+                          0,
+                          4,
+                        ), // Mueve el texto 8 píxeles hacia abajo
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            formattedAmount,
+                            textAlign: TextAlign.right,
+                            style: Theme.of(context).textTheme.titleLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: widget.color,
+                                  fontSize: 26,
+                                  letterSpacing: -0.5,
+                                ),
+                          ),
+                        ),
                       ),
-                      
-                      // Barra de progreso decorativa
-                      const SizedBox(height: 12),
+
+                      // Barra de progreso decorativa - Reducimos el espacio superior
+                      const SizedBox(
+                        height: 4,
+                      ), // Reducido aún más para compensar el desplazamiento
                       Container(
                         height: 4,
                         decoration: BoxDecoration(
