@@ -124,106 +124,121 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.75,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        children: [
-          // Handle bar
-          Container(
-            height: 5,
-            width: 40,
-            margin: const EdgeInsets.only(top: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(3),
+    return AnimatedPadding(
+      padding: EdgeInsets.only(bottom: keyboardHeight),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              height: 5,
+              width: 40,
+              margin: const EdgeInsets.only(top: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(3),
+              ),
             ),
-          ),
 
-          // Header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.grey),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                Text(
-                  AppLocalizations.of(context)!.newTransaction,
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.grey),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                ),
-                const SizedBox(width: 48),
-              ],
+                  Text(
+                    AppLocalizations.of(context)!.newTransaction,
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 48),
+                ],
+              ),
             ),
-          ),
 
-          Expanded(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Type selector
-                      _TypeSelector(
-                        selectedType: type,
-                        onTypeChanged: (newType) {
-                          setState(() => type = newType);
-                        },
-                      ),
+            Expanded(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 24,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Type selector
+                        _TypeSelector(
+                          selectedType: type,
+                          onTypeChanged: (newType) {
+                            setState(() => type = newType);
+                          },
+                        ),
 
-                      const SizedBox(height: 32),
+                        const SizedBox(height: 32),
 
-                      // Amount field
-                      _AmountField(
-                        controller: _amountController,
-                        type: type,
-                        onChanged: (value) {
-                          final valueWithoutDollarSign = value.replaceAll(
-                            '\$',
-                            '',
-                          );
-                          final valueWithoutCommas = valueWithoutDollarSign
-                              .replaceAll(',', '');
-                          setState(() {
-                            amount = valueWithoutCommas.isNotEmpty
-                                ? double.parse(valueWithoutCommas)
-                                : 0.0;
-                          });
-                        },
-                      ),
+                        // Amount field
+                        _AmountField(
+                          controller: _amountController,
+                          type: type,
+                          onChanged: (value) {
+                            final valueWithoutDollarSign = value.replaceAll(
+                              '\$',
+                              '',
+                            );
+                            final valueWithoutCommas = valueWithoutDollarSign
+                                .replaceAll(',', '');
+                            setState(() {
+                              amount = valueWithoutCommas.isNotEmpty
+                                  ? double.parse(valueWithoutCommas)
+                                  : 0.0;
+                            });
+                          },
+                        ),
 
-                      const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                      // Description field
-                      _DescriptionField(
-                        controller: _descriptionController,
-                        onChanged: (value) {
-                          setState(() => description = value);
-                        },
-                      ),
+                        // Description field
+                        _DescriptionField(
+                          controller: _descriptionController,
+                          onChanged: (value) {
+                            setState(() => description = value);
+                          },
+                        ),
 
-                      const SizedBox(height: 32),
-                      // Save button
-                      _SaveButton(isEnabled: _isValid, onPressed: _handleSave),
-                    ],
+                        const SizedBox(height: 32),
+
+                        // Save button
+                        _SaveButton(
+                          isEnabled: _isValid,
+                          onPressed: _handleSave,
+                        ),
+
+                        SizedBox(height: keyboardHeight > 0 ? 20 : 0),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
