@@ -18,11 +18,14 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
   TransactionType type = TransactionType.income;
   double amount = 0.0;
   String description = '';
+
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+
   final ScrollController _scrollController = ScrollController();
   final FocusNode _amountFocusNode = FocusNode();
   final FocusNode _descriptionFocusNode = FocusNode();
@@ -35,14 +38,12 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
       ),
     );
-
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
           CurvedAnimation(
@@ -51,13 +52,12 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
           ),
         );
 
-    // Configurar listeners para el foco
+    // Listeners para el foco
     _amountFocusNode.addListener(() {
       if (_amountFocusNode.hasFocus) {
         _scrollToMakeButtonVisible();
       }
     });
-
     _descriptionFocusNode.addListener(() {
       if (_descriptionFocusNode.hasFocus) {
         _scrollToMakeButtonVisible();
@@ -67,30 +67,45 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
     _animationController.forward();
   }
 
-  void _scrollToMakeButtonVisible() {
-    // Esperar a que el teclado esté completamente abierto y el layout se haya actualizado
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_buttonKey.currentContext == null) return;
+  /// Función corregida para que funcione desde el primer foco
+  void _scrollToMakeButtonVisible() async {
+    // Pequeña pausa inicial para que el foco se procese
+    await Future.delayed(const Duration(milliseconds: 50));
 
-      // Obtener la posición del botón en la pantalla
-      final renderBox = _buttonKey.currentContext?.findRenderObject() as RenderBox?;
+    // Esperamos a que el teclado esté visible (viewInsets.bottom > 0)
+    int attempts = 0;
+    while (MediaQuery.of(context).viewInsets.bottom == 0 && attempts < 20) {
+      await Future.delayed(const Duration(milliseconds: 50));
+      attempts++;
+    }
+
+    // Aseguramos que el widget siga montado
+    if (!mounted) return;
+
+    // Esperamos un frame más para que el RenderBox del botón esté disponible
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final renderBox =
+          _buttonKey.currentContext?.findRenderObject() as RenderBox?;
       if (renderBox == null) return;
 
       final buttonPosition = renderBox.localToGlobal(Offset.zero);
       final buttonBottom = buttonPosition.dy + renderBox.size.height;
 
-      // Obtener la altura disponible (altura de la pantalla - altura del teclado)
       final screenHeight = MediaQuery.of(context).size.height;
       final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
       final availableHeight = screenHeight - keyboardHeight;
 
-      // Si el botón está tapado por el teclado, calcular cuánto scroll necesitamos
+      // Si el botón queda tapado por el teclado, hacemos scroll justo lo necesario
       if (buttonBottom > availableHeight) {
-        final offsetNeeded = buttonBottom - availableHeight + 20; // +20px de margen
+        final offsetNeeded =
+            buttonBottom - availableHeight + 20; // margen extra
+
         _scrollController.animateTo(
           _scrollController.offset + offsetNeeded,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
         );
       }
     });
@@ -112,7 +127,6 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
   void _handleSave() {
     if (!_isValid) return;
 
-    // Si no hay descripción, mostrar diálogo de confirmación
     if (description.trim().isEmpty) {
       _showNoDescriptionDialog();
       return;
@@ -174,7 +188,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    
+
     return AnimatedPadding(
       padding: EdgeInsets.only(bottom: keyboardHeight),
       duration: const Duration(milliseconds: 300),
@@ -197,7 +211,6 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
-
             // Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -218,7 +231,6 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                 ],
               ),
             ),
-
             Expanded(
               child: FadeTransition(
                 opacity: _fadeAnimation,
@@ -240,9 +252,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                             setState(() => type = newType);
                           },
                         ),
-
                         const SizedBox(height: 32),
-
                         // Amount field
                         _AmountField(
                           controller: _amountController,
@@ -262,9 +272,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                             });
                           },
                         ),
-
                         const SizedBox(height: 24),
-
                         // Description field
                         _DescriptionField(
                           controller: _descriptionController,
@@ -273,17 +281,14 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                             setState(() => description = value);
                           },
                         ),
-
                         const SizedBox(height: 32),
-
                         // Save button con GlobalKey
                         _SaveButton(
-                          key: _buttonKey, // Usamos la GlobalKey aquí
+                          key: _buttonKey,
                           isEnabled: _isValid,
                           onPressed: _handleSave,
                         ),
-
-                        // Espacio adicional para el teclado (reducido)
+                        // Espacio adicional cuando el teclado está abierto
                         SizedBox(height: keyboardHeight > 0 ? 40 : 0),
                       ],
                     ),
@@ -298,7 +303,9 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
   }
 }
 
-// Type Selector Component
+// Los componentes secundarios permanecen exactamente iguales
+// (TypeSelector, TypeOption, AmountField, DescriptionField, SaveButton)
+
 class _TypeSelector extends StatelessWidget {
   final TransactionType selectedType;
   final ValueChanged<TransactionType> onTypeChanged;
@@ -391,7 +398,6 @@ class _TypeOption extends StatelessWidget {
   }
 }
 
-// Amount Field Component
 class _AmountField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -408,7 +414,6 @@ class _AmountField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = type == TransactionType.income ? Colors.teal : Colors.red;
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -454,7 +459,6 @@ class _AmountField extends StatelessWidget {
   }
 }
 
-// Description Field Component
 class _DescriptionField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -506,7 +510,6 @@ class _DescriptionField extends StatelessWidget {
   }
 }
 
-// Save Button Component - MODIFICADO para aceptar Key
 class _SaveButton extends StatelessWidget {
   final bool isEnabled;
   final VoidCallback onPressed;
@@ -521,7 +524,6 @@ class _SaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isEnabled ? Colors.blue : Colors.grey;
-
     return InkWell(
       onTap: isEnabled ? onPressed : null,
       borderRadius: BorderRadius.circular(12),
