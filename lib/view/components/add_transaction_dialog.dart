@@ -23,6 +23,10 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _amountFocusNode = FocusNode();
+  final FocusNode _descriptionFocusNode = FocusNode();
+  final GlobalKey _buttonKey = GlobalKey();
 
   @override
   void initState() {
@@ -47,7 +51,49 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
           ),
         );
 
+    // Configurar listeners para el foco
+    _amountFocusNode.addListener(() {
+      if (_amountFocusNode.hasFocus) {
+        _scrollToMakeButtonVisible();
+      }
+    });
+
+    _descriptionFocusNode.addListener(() {
+      if (_descriptionFocusNode.hasFocus) {
+        _scrollToMakeButtonVisible();
+      }
+    });
+
     _animationController.forward();
+  }
+
+  void _scrollToMakeButtonVisible() {
+    // Esperar a que el teclado esté completamente abierto y el layout se haya actualizado
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_buttonKey.currentContext == null) return;
+
+      // Obtener la posición del botón en la pantalla
+      final renderBox = _buttonKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox == null) return;
+
+      final buttonPosition = renderBox.localToGlobal(Offset.zero);
+      final buttonBottom = buttonPosition.dy + renderBox.size.height;
+
+      // Obtener la altura disponible (altura de la pantalla - altura del teclado)
+      final screenHeight = MediaQuery.of(context).size.height;
+      final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+      final availableHeight = screenHeight - keyboardHeight;
+
+      // Si el botón está tapado por el teclado, calcular cuánto scroll necesitamos
+      if (buttonBottom > availableHeight) {
+        final offsetNeeded = buttonBottom - availableHeight + 20; // +20px de margen
+        _scrollController.animateTo(
+          _scrollController.offset + offsetNeeded,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
@@ -55,6 +101,9 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
     _animationController.dispose();
     _amountController.dispose();
     _descriptionController.dispose();
+    _scrollController.dispose();
+    _amountFocusNode.dispose();
+    _descriptionFocusNode.dispose();
     super.dispose();
   }
 
@@ -125,7 +174,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-
+    
     return AnimatedPadding(
       padding: EdgeInsets.only(bottom: keyboardHeight),
       duration: const Duration(milliseconds: 300),
@@ -176,6 +225,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                 child: SlideTransition(
                   position: _slideAnimation,
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
                       vertical: 24,
@@ -196,6 +246,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                         // Amount field
                         _AmountField(
                           controller: _amountController,
+                          focusNode: _amountFocusNode,
                           type: type,
                           onChanged: (value) {
                             final valueWithoutDollarSign = value.replaceAll(
@@ -217,6 +268,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
                         // Description field
                         _DescriptionField(
                           controller: _descriptionController,
+                          focusNode: _descriptionFocusNode,
                           onChanged: (value) {
                             setState(() => description = value);
                           },
@@ -224,13 +276,15 @@ class _AddTransactionDialogState extends State<AddTransactionDialog>
 
                         const SizedBox(height: 32),
 
-                        // Save button
+                        // Save button con GlobalKey
                         _SaveButton(
+                          key: _buttonKey, // Usamos la GlobalKey aquí
                           isEnabled: _isValid,
                           onPressed: _handleSave,
                         ),
 
-                        SizedBox(height: keyboardHeight > 0 ? 20 : 0),
+                        // Espacio adicional para el teclado (reducido)
+                        SizedBox(height: keyboardHeight > 0 ? 40 : 0),
                       ],
                     ),
                   ),
@@ -340,11 +394,13 @@ class _TypeOption extends StatelessWidget {
 // Amount Field Component
 class _AmountField extends StatelessWidget {
   final TextEditingController controller;
+  final FocusNode focusNode;
   final TransactionType type;
   final ValueChanged<String> onChanged;
 
   const _AmountField({
     required this.controller,
+    required this.focusNode,
     required this.type,
     required this.onChanged,
   });
@@ -375,6 +431,7 @@ class _AmountField extends StatelessWidget {
           const SizedBox(height: 8),
           TextField(
             controller: controller,
+            focusNode: focusNode,
             inputFormatters: [
               CurrencyTextInputFormatter.currency(symbol: '\$'),
             ],
@@ -388,7 +445,7 @@ class _AmountField extends StatelessWidget {
               hintStyle: TextStyle(color: color.withValues(alpha: 0.3)),
             ),
             keyboardType: TextInputType.number,
-            autofocus: true,
+            autofocus: false,
             onChanged: onChanged,
           ),
         ],
@@ -400,9 +457,14 @@ class _AmountField extends StatelessWidget {
 // Description Field Component
 class _DescriptionField extends StatelessWidget {
   final TextEditingController controller;
+  final FocusNode focusNode;
   final ValueChanged<String> onChanged;
 
-  const _DescriptionField({required this.controller, required this.onChanged});
+  const _DescriptionField({
+    required this.controller,
+    required this.focusNode,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -428,6 +490,7 @@ class _DescriptionField extends StatelessWidget {
           const SizedBox(height: 8),
           TextField(
             controller: controller,
+            focusNode: focusNode,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             decoration: InputDecoration.collapsed(
               hintText: AppLocalizations.of(context)!.enterDescription,
@@ -443,12 +506,17 @@ class _DescriptionField extends StatelessWidget {
   }
 }
 
-// Save Button Component
+// Save Button Component - MODIFICADO para aceptar Key
 class _SaveButton extends StatelessWidget {
   final bool isEnabled;
   final VoidCallback onPressed;
+  final Key? key;
 
-  const _SaveButton({required this.isEnabled, required this.onPressed});
+  const _SaveButton({
+    this.key,
+    required this.isEnabled,
+    required this.onPressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
